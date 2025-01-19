@@ -91,3 +91,18 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_info(void)
+{
+   int num_processes = countProc();
+
+//   for (struct proc *p = proc; p < &proc[NPROC]; p++) {
+//      acquire(&p->lock); // Acquire the lock to ensure atomic access
+//      if (p->state != UNUSED) {
+//        num_processes++;
+//      }
+//      release(&p->lock); // Release the lock
+//   }   
+   return num_processes;
+}

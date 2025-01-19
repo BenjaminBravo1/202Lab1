@@ -693,3 +693,17 @@ procdump(void)
     printf("\n");
   }
 }
+
+int countProc(void)
+{
+   int num_processes = 0;
+
+   for (struct proc *p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock); // Acquire the lock to ensure atomic access
+      if (p->state != UNUSED) {
+        num_processes++;
+      }
+      release(&p->lock); // Release the lock
+   }
+   return num_processes;
+}
