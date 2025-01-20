@@ -132,6 +132,8 @@ found:
     return 0;
   }
 
+  p->trapframe_phys = (uint64)p->trapframe;
+
   // An empty user page table.
   p->pagetable = proc_pagetable(p);
   if(p->pagetable == 0){
@@ -201,6 +203,11 @@ proc_pagetable(struct proc *p)
     uvmfree(pagetable, 0);
     return 0;
   }
+
+  ///
+  //p->num_pages = 0;
+  ///
+  p->trampoline_addr = (uint64)p->trapframe + PGSIZE;
 
   return pagetable;
 }
@@ -706,4 +713,49 @@ int countProc(void)
       release(&p->lock); // Release the lock
    }
    return num_processes;
+}
+
+int findPages(void)
+{
+   struct proc *p = myproc();
+   uint64 num_pages = 0;
+   pte_t *pte;
+
+   if (p == 0) {
+       return 0; 
+   }
+
+   for (uint64 va = 0xF000000; va < p->sz; va += PGSIZE) { 
+       //pte = walk(p->pagetable, 0xF000000, 0);
+       pte = walk(p->pagetable, va, 0); 
+       if ((pte && PTE_V)) { 
+       //if ((pte && PTE_V)) {
+          num_pages++;
+	  //Print the virtual address of the found page
+	  //printf("Virtual Address: %ld \n", va);
+       }
+   }
+
+   if (p->trapframe_phys >= 0xF000000)
+   {
+      num_pages++;
+   }
+   if (p->trampoline_addr >= 0xF000000)
+   {
+      num_pages++;
+   }
+ 
+   // Print the virtual address of the trampoline page
+   //printf("Trampoline page address: %ld \n", p->trampoline_addr);
+
+   // Print the virtual address of the trapframe page
+   //printf("Trapframe page address: %ld \n", p->trapframe_phys); 
+
+   return num_pages;
+}
+
+uint64 getKstack(void)
+{
+   struct proc *p = myproc();
+   return p->kstack;
 }

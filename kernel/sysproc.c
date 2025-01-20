@@ -95,7 +95,11 @@ sys_uptime(void)
 uint64
 sys_info(void)
 {
-   int num_processes = countProc();
+   //int num_processes = countProc();
+
+   //int num_pages = findPages();
+
+   uint64 kstack_loc = getKstack();
 
 //   for (struct proc *p = proc; p < &proc[NPROC]; p++) {
 //      acquire(&p->lock); // Acquire the lock to ensure atomic access
@@ -104,5 +108,7 @@ sys_info(void)
 //      }
 //      release(&p->lock); // Release the lock
 //   }   
-   return num_processes;
+   //return num_processes;
+   //return num_pages;
+   return kstack_loc;
 }

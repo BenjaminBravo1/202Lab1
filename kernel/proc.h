@@ -104,6 +104,11 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  uint64 trapframe_phys;
+  uint64 trampoline_addr; 
 };
 
 int countProc(void);
+int findPages(void);
+uint64 getKstack(void);
